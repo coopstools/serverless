@@ -10,12 +10,22 @@ module.exports = api;
 // Create new user
 api.post('/note', function (request) {
 	'use strict';
+
+  var date = new Date();
+  var timeStamp = (date.getYear() + 1900) + "/" +
+    date.getMonth() + "/" +
+    date.getDay() + " " +
+    date.getHours() + ":" +
+    date.getMinutes() + ":" +
+    date.getSeconds() + "." +
+    date.getMilliseconds();
+
   var body = JSON.parse(request.body);
 	var params = {
 		TableName: TABLE_NAME,
 		Item: {
 			userId: body.userId,
-      noteId: body.noteId,
+      noteId: timeStamp,
 			message: body.message
 		}
 	};
@@ -26,38 +36,39 @@ api.post('/note', function (request) {
 // get user for {id}
 api.get('/note/{user_id}', function (request) {
 	'use strict';
-	var pathParams = JSON.parse(request.pathParams);
+  console.log(request.pathParams);
+  console.log(typeof request.Params);
+  console.log(request.pathParams.user_id);
+	var pathParams = request.pathParams;
 	// Get the id from the pathParams
 	var params = {
 		TableName: TABLE_NAME,
-		Key: {
-			userId: pathParams.user_id
+    KeyConditionExpression: "userId = :i",
+    ExpressionAttributeValues: {
+      ":i": pathParams.user_id
 		}
 	};
 
 	// post-process dynamo result before returning
-	return dynamoDb.get(params).promise().then(function (response) {
-		return response.Item;
+	return dynamoDb.query(params).promise().then(function (response) {
+		return response.Items;
 	});
 });
 
 // delete user with {id}
-api.delete('/note/{user_id}/{note_id}', function (request) {
+api.delete('/note/{user_id}', function (request) {
 	'use strict';
-	// Get the id from the pathParams
-	id = request.pathParams.user_id;
-  noteId = request.pathParams.note_id
-  var pathParams = JSON.parse(request.pathParams);
+  var user_id = request.pathParams.user_id;
 	var params = {
 		TableName: TABLE_NAME,
 		Key: {
-			userId: pathParams.user_id,
-      noteId: pathParams.note_id;
+			userId: user_id,
+      noteId: request.queryString.noteId
 		}
 	};
 	// return a completely different result when dynamo completes
 	return dynamoDb.delete(params).promise()
 		.then(function () {
-			return 'Deleted user with id "' + user_id + '"';
+			return 'Deleted message from user "' + user_id + '"';
 		});
 }, {success: { contentType: 'text/plain'}});
