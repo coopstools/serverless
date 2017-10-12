@@ -1,0 +1,20 @@
+{
+  "name": "note-manager",
+  "version": "1.0.0",
+  "description": "A hello world test",
+  "main": "note_manager.js",
+  "scripts": {
+    "create-app": "claudia create --region us-east-1 --api-module note_manager --profile coopstools --configure-db --policies policies --keep",
+    "update-app": "claudia update --profile coopstools --policies policies --keep",
+    "test": "curl $npm_claudia_lambda_role"
+  },
+  "author": "James@Coopstools.com",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.122.0",
+    "claudia-api-builder": "^2.5.1"
+  },
+  "devDependencies": {
+    "claudia": "^2.14.2"
+  }
+}

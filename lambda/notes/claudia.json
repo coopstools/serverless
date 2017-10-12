@@ -1,0 +1,11 @@
+{
+  "lambda": {
+    "role": "note-manager-executor",
+    "name": "note-manager",
+    "region": "us-east-1"
+  },
+  "api": {
+    "id": "ah698tl0kf",
+    "module": "note_manager"
+  }
+}
