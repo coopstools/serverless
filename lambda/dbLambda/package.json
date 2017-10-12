@@ -1,0 +1,17 @@
+{
+  "name": "db-accessor",
+  "version": "1.0.0",
+  "description": "A trial to access a db",
+  "main": "index.js",
+  "scripts": {
+    "create-app": "claudia create --region us-east-1 --api-module index --profile coopstools --policies policies --configure-db --keep --set-env-from-json env.json",
+    "update-app": "claudia update --profile coopstools --configure-db --keep --set-env-from-json env.json",
+    "test": "curl $npm_claudia_lambda_role"
+  },
+  "author": "James@Coopstools.com",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.122.0",
+    "claudia-api-builder": "^2.5.1"
+  }
+}
