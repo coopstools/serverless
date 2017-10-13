@@ -20,7 +20,7 @@ api.post('/note', function (request) {
     date.getSeconds() + "." +
     date.getMilliseconds();
 
-  var body = JSON.parse(request.body);
+  var body = request.body;
 	var params = {
 		TableName: TABLE_NAME,
 		Item: {
@@ -36,9 +36,6 @@ api.post('/note', function (request) {
 // get user for {id}
 api.get('/note/{user_id}', function (request) {
 	'use strict';
-  console.log(request.pathParams);
-  console.log(typeof request.Params);
-  console.log(request.pathParams.user_id);
 	var pathParams = request.pathParams;
 	// Get the id from the pathParams
 	var params = {

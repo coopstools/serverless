@@ -19,12 +19,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
 
-
     <!-- Custom styles for this template -->
-    <link href="css/simple-sidebar.css" rel="stylesheet">
+    <link href="css/index.css" rel="stylesheet">
+
+    <!-- Angular files -->
+    <script src="https://code.angularjs.org/1.6.6/angular.min.js"></script>
+    <!--script src="https://code.angularjs.org/1.6.6/angular-route.min.js"></script-->
+    <script src="js/index.js"></script>
 
 </head>
-<body>
+<body ng-app="IndexApp" ng-controller="IndexController as ctx">
+
+  <nav class="nav">
+    <!--a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a-->
+    <a class="nav-link active" href="#menu-toggle" id="menu-toggle">Menu</a>
+  </nav>
+
   <div id="wrapper">
 
       <!-- Sidebar -->
@@ -36,10 +46,10 @@
                   </a>
               </li>
               <li>
-                  <a href="#">Dashboard</a>
+                  <a href="#" ng-click="ctx.goHome()">Home</a>
               </li>
               <li>
-                  <a href="#">Shortcuts</a>
+                  <a href="#" ng-click="ctx.goNote()">Note Example</a>
               </li>
               <li>
                   <a href="#">Overview</a>
@@ -62,23 +72,44 @@
 
       <!-- Page Content -->
       <div id="page-content-wrapper">
-          <div class="container-fluid">
-            <a href="#menu-toggle" class="btn btn-secondary" id="menu-toggle">Toggle Menu</a>
+          <div class="container-fluid" ng-if="ctx.home">
               <h1>Going Serverless</h1>
               <p>Whether a startup looking to cut costs</p>
               <p>Or, a flourishing enterprise, looking to scale</p>
               <p>Serverless Architecture is the right choice</p>
+          </div>
+          <div class="container-fluid" ng-if="ctx.note">
+              <h1>Going Serverless</h1>
+              <p>Try out this note example</p>
+              <p>It's written on the s3-Lambda-dynamo stack</p>
+
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th class="fit">Time Stamp</th>
+                    <th>Message</th>
+                    <td class="last-child"></td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr ng-repeat="singleNote in ctx.notes">
+                    <th class="fit" scope="row">{{ singleNote.noteId }}</th>
+                    <td>{{ singleNote.message }}</td>
+                    <td class="last-child"><a href="" ng-click="ctx.deleteNote(singleNote)">X</a></td>
+                  </tr>
+                  <tr>
+                    <th>New Message</th>
+                    <td><textarea class="form-control" rows="2" id="comment" ng-model="ctx.newMessage"></textarea></td>
+                    <td class="last-child"><a href="" ng-click="ctx.createNote()">submit</a></td>
+                  </tr>
+                </tbody>
+              </table>
           </div>
       </div>
       <!-- /#page-content-wrapper -->
 
   </div>
   <!-- /#wrapper -->
-
-  <!-- Bootstrap core JavaScript -->
-  <script src="vendor/jquery/jquery.min.js"></script>
-  <script src="vendor/popper/popper.min.js"></script>
-  <script src="vendor/bootstrap/js/bootstrap.min.js"></script>
 
   <!-- Menu Toggle Script -->
   <script>
