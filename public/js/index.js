@@ -4,19 +4,39 @@ indexApp.controller('IndexController', ['$http', function($http) {
 
   var self = this;
   self.$http = $http;
-  self.home = true;
-  self.note = false;
+  self.home_vis = true;
+  self.note_vis = false;
+  self.login_vis = false;
 
   self.goHome = function() {
-    self.home = true;
-    self.note = false;
+    hideAll();
+    self.home_vis = true;
   };
 
   self.goNote = function() {
-    self.home = false;
-    self.note = true;
+    hideAll();
+    self.note_vis = true;
     self.getNotes();
   };
+
+  self.goLogin = function() {
+    hideAll();
+    self.login_vis = true;
+  }
+
+  self.loginCallBack = function() {
+    renderButton(self);
+  }
+
+  var hideAll = function() {
+    self.home_vis = false;
+    self.note_vis = false;
+    self.login_vis = false;
+  }
+
+  self.log = function(val) {
+    console.log(val);
+  }
 
   self.getNotes = function() {
     self.$http
@@ -48,3 +68,25 @@ indexApp.controller('IndexController', ['$http', function($http) {
       });
   }
 }]);
+
+var buildOnSuccess = function(ctx) {
+  return function (googleUser) {
+    ctx.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+  };
+}
+
+function onFailure(error) {
+  console.log(error);
+};
+
+function renderButton(ctx) {
+  gapi.signin2.render('my-signin2', {
+    'scope': 'profile email',
+    'width': 240,
+    'height': 50,
+    'longtitle': true,
+    'theme': 'dark',
+    'onsuccess': buildOnSuccess(ctx),
+    'onfailure': onFailure
+  });
+};

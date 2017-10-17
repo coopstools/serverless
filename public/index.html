@@ -10,6 +10,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="My first s3 hosted homepage">
     <meta name="author" content="James@coopstools.com">
+    <meta name="google-signin-client_id" content="909688484643-4c6v4s67ijsllobjv1vg6vjplc0og0u1.apps.googleusercontent.com">
 
     <title>Coopstools - Migrate to Serverless</title>
 
@@ -27,8 +28,9 @@
     <!--script src="https://code.angularjs.org/1.6.6/angular-route.min.js"></script-->
     <script src="js/index.js"></script>
 
-    <!-- Used for cognito login -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.133.0/aws-sdk.min.js"></script>
+    <!-- Used for cognito login >
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.133.0/aws-sdk.min.js"></script-->
+    <script src="https://apis.google.com/js/platform.js"></script>
 
 </head>
 <body ng-app="IndexApp" ng-controller="IndexController as ctx">
@@ -64,12 +66,7 @@
                   <a href="#">About</a>
               </li>
               <li>
-                  <a href="#">Services</a>
-              </li>
-              <li>
-                  <a href id="LoginWithAmazon">
-                    <img border="0" alt="Login with Amazon" src="https://images-na.ssl-images-amazon.com/images/G/01/lwa/btnLWA_gold_156x32.png" width="156" height="32" />
-                  </a>
+                  <a href="#" ng-click="ctx.goLogin()">Login</a>
               </li>
           </ul>
       </div>
@@ -77,39 +74,49 @@
 
       <!-- Page Content -->
       <div id="page-content-wrapper">
-          <div class="container-fluid" ng-if="ctx.home">
-              <h1>Going Serverless</h1>
-              <p>Whether a startup looking to cut costs</p>
-              <p>Or, a flourishing enterprise, looking to scale</p>
-              <p>Serverless Architecture is the right choice</p>
-          </div>
-          <div class="container-fluid" ng-if="ctx.note">
-              <h1>Going Serverless</h1>
-              <p>Try out this note example</p>
-              <p>It's written on the s3-Lambda-dynamo stack</p>
+        <!-- Home -->
+        <div class="container-fluid" ng-if="ctx.home_vis">
+            <h1>Going Serverless</h1>
+            <p>Whether a startup looking to cut costs</p>
+            <p>Or, a flourishing enterprise, looking to scale</p>
+            <p>Serverless Architecture is the right choice</p>
+        </div>
+        <!-- End Home -->
+        <!-- Notes Example -->
+        <div class="container-fluid" ng-if="ctx.note_vis">
+            <h1>Going Serverless</h1>
+            <p>Try out this note example</p>
+            <p>It's written on the s3-Lambda-dynamo stack</p>
 
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th class="fit">Time Stamp</th>
-                    <th>Message</th>
-                    <td class="last-child"></td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr ng-repeat="singleNote in ctx.notes">
-                    <th class="fit" scope="row">{{ singleNote.noteId }}</th>
-                    <td>{{ singleNote.message }}</td>
-                    <td class="last-child"><a href="" ng-click="ctx.deleteNote(singleNote)">X</a></td>
-                  </tr>
-                  <tr>
-                    <th>New Message</th>
-                    <td><textarea class="form-control" rows="2" id="comment" ng-model="ctx.newMessage"></textarea></td>
-                    <td class="last-child"><a href="" ng-click="ctx.createNote()">submit</a></td>
-                  </tr>
-                </tbody>
-              </table>
-          </div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th class="fit">Time Stamp</th>
+                  <th>Message</th>
+                  <td class="last-child"></td>
+                </tr>
+              </thead>
+              <tbody>
+                <tr ng-repeat="singleNote in ctx.notes">
+                  <th class="fit" scope="row">{{ singleNote.noteId }}</th>
+                  <td>{{ singleNote.message }}</td>
+                  <td class="last-child"><a href="" ng-click="ctx.deleteNote(singleNote)">X</a></td>
+                </tr>
+                <tr>
+                  <th>New Message</th>
+                  <td><textarea class="form-control" rows="2" id="comment" ng-model="ctx.newMessage"></textarea></td>
+                  <td class="last-child"><a href="" ng-click="ctx.createNote()">submit</a></td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+        <!-- End Notes Example -->
+        <!-- Login -->
+        <div class="container-fluid" ng-if="ctx.login_vis">
+          <div id="my-signin2"></div>
+          <div ng-init="ctx.loginCallBack()"></div>
+        </div>
+        <!-- End Login -->
       </div>
       <!-- /#page-content-wrapper -->
 
@@ -123,29 +130,5 @@
       $("#wrapper").toggleClass("toggled");
   });
   </script>
-
-  <div id="amazon-root"></div>
-  <script type="text/javascript">
-
-    window.onAmazonLoginReady = function() {
-      amazon.Login.setClientId('amzn1.application.623cd3d0da844b0481120546af16b6e9');
-    };
-    (function(d) {
-      var a = d.createElement('script'); a.type = 'text/javascript';
-      a.async = true; a.id = 'amazon-login-sdk';
-      a.src = 'https://api-cdn.amazon.com/sdk/login1.js';
-      d.getElementById('amazon-root').appendChild(a);
-    })(document);
-
-  </script>
-  <script type="text/javascript">
-    document.getElementById('LoginWithAmazon').onclick = function() {
-    options = { scope : 'profile' };
-    amazon.Login.authorize(options,
-       'https://dyffl6lwf3mxh.cloudfront.net/');
-    return false;
-    };
-  </script>
-
 </body>
 </html>
