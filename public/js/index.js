@@ -104,10 +104,7 @@ var buildOnSuccess = function(rend) {
           }
           dataset.synchronize({
             onSuccess: function(data, newRecords) {
-              console.log("data");
               console.log(data);
-              console.log("newRecords");
-              console.log(newRecords);
             },
             onFailure: function(err) {
               console.log("error in synchronization");
@@ -117,10 +114,20 @@ var buildOnSuccess = function(rend) {
         });
       });
 
+      console.log(AWS.config.credentials);
+      var apigClient = apigClientFactory.newClient({
+        accessKey: AWS.config.credentials.accessKeyId, //'ACCESS_KEY',
+        secretKey: AWS.config.credentials.secretAccessKey, //'SECRET_KEY',
+        sessionToken: AWS.config.credentials.sessionToken, // 'SESSION_TOKEN', //OPTIONAL: If you are using temporary credentials you must include the session token
+        region: 'us-east-1' // OPTIONAL: The region where the API is deployed, by default this parameter is set to us-east-1
+      });
+
+      apigClient.notePost({}, {
+        userId: "asdf",
+        message: "testing sdk"
+      }, {});
       rend(name);
     });
-
-    console.log(cognitoUser);
   }
 }
 
