@@ -46,8 +46,15 @@ body {
     margin-right: -250px;
 }
 
-.nav {
+.navbar {
   background-color: black;
+}
+
+.navbar-text {
+  color: #7AF3C7
+}
+
+.navbar-text {
 }
 
 /* Sidebar Styles */

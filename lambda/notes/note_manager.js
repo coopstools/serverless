@@ -13,8 +13,8 @@ api.post('/note', function (request) {
 
   var date = new Date();
   var timeStamp = (date.getYear() + 1900) + "/" +
-    date.getMonth() + "/" +
-    date.getDay() + " " +
+    (date.getMonth() + 1) + "/" +
+    date.getDate() + " " +
     date.getHours() + ":" +
     date.getMinutes() + ":" +
     date.getSeconds() + "." +

@@ -60,3 +60,5 @@ typings/
 s3ro_credentials.csv
 
 public/google_client_id.json
+
+temp/

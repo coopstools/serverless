@@ -1,12 +1,15 @@
 var indexApp = angular.module('IndexApp', []);
 
-indexApp.controller('IndexController', ['$http', function($http) {
+indexApp.controller('IndexController', ['$timeout', '$http',
+function($timeout, $http) {
 
   var self = this;
   self.$http = $http;
   self.home_vis = true;
   self.note_vis = false;
   self.login_vis = false;
+
+  self.user = {};
 
   self.goHome = function() {
     hideAll();
@@ -25,7 +28,10 @@ indexApp.controller('IndexController', ['$http', function($http) {
   }
 
   self.loginCallBack = function() {
-    renderButton(self);
+
+    renderButton(function(name) {
+      $timeout(function() { self.user.name = name }, 0);
+    });
   }
 
   var hideAll = function() {
@@ -69,24 +75,67 @@ indexApp.controller('IndexController', ['$http', function($http) {
   }
 }]);
 
-var buildOnSuccess = function(ctx) {
+var buildOnSuccess = function(rend) {
   return function (googleUser) {
-    ctx.log('Logged in as: ' + googleUser.getBasicProfile().getName());
-  };
+    var name = googleUser.getBasicProfile().getName();
+    console.log('Logged in as: ' + name);
+
+    AWS.config.region = 'us-east-1';
+    AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+        IdentityPoolId: "us-east-1:955a014f-a703-4c37-8716-26531a558cbd",
+        Logins: {
+           'accounts.google.com': googleUser.getAuthResponse().id_token
+        }
+     });
+
+    var cognitoUser = AWS.config.credentials.get(function(err) {
+      if (err) {
+        console.log(err);
+        return;
+      };
+
+      var client = new AWS.CognitoSyncManager();
+      client.openOrCreateDataset('myDatasetName', function(err, dataset) {
+
+        dataset.put("name", name, function(err, record) {
+          if (err) {
+            console.log(err);
+            return;
+          }
+          dataset.synchronize({
+            onSuccess: function(data, newRecords) {
+              console.log("data");
+              console.log(data);
+              console.log("newRecords");
+              console.log(newRecords);
+            },
+            onFailure: function(err) {
+              console.log("error in synchronization");
+              console.log(err);
+            }
+          })
+        });
+      });
+
+      rend(name);
+    });
+
+    console.log(cognitoUser);
+  }
 }
 
 function onFailure(error) {
   console.log(error);
 };
 
-function renderButton(ctx) {
+function renderButton(rend) {
   gapi.signin2.render('my-signin2', {
     'scope': 'profile email',
     'width': 240,
     'height': 50,
     'longtitle': true,
     'theme': 'dark',
-    'onsuccess': buildOnSuccess(ctx),
+    'onsuccess': buildOnSuccess(rend),
     'onfailure': onFailure
   });
 };
